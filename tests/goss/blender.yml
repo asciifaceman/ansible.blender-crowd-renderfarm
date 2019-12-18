@@ -1,1 +1,11 @@
 ---
+file:
+    /etc/profile.d/blender-path.sh:
+        exists: true
+        contains: ["PATH=$PATH:/home/vagrant/blender"]
+command:
+    version:
+        exit-status: 0
+        #exec: "blender --version"
+        exec: "/home/vagrant/blender/blender --version"
+        skip: false

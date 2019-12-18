@@ -2,3 +2,4 @@
 # defaults file for ansible.blender-crowd-renderfarm\
 blenderSource: https://mirror.clarkson.edu/blender/release/Blender2.81/blender-2.81a-linux-glibc217-x86_64.tar.bz2
 blenderChecksum: TODO
+localTesting: false

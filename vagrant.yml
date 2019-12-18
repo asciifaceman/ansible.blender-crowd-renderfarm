@@ -2,6 +2,9 @@
 - name: Apply local role for testing
   hosts: all
 
+  vars:
+    localTesting: true
+
   roles:
     - role: "{{ playbook_dir }}"
     - {

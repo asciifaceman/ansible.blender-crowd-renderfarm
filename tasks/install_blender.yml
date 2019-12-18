@@ -1,14 +1,43 @@
 ---
-#- name: Download blender
-#  get_url:
-#    url: "${blenderSource}"
-#    dest: /tmp/blender.tar.gz
-#    mode: '0644'
-# TODO: Add checksum
-# TODO: 
+
+- name: Install dependencies
+  become: true
+  package:
+    name:
+        - libglu1
+        - libxi6
+        - libxrender1
+    state: latest
+  register: dep_install
+
+- name: Create destination directory
+  file:
+    path: "{{ansible_env.HOME}}/blender"
+    state: directory
+    mode: '0755'
+    owner: "{{ansible_user_id}}"
+    group: "{{ansible_user_id}}"
+
 - name: Download and unarchive blender
+  when: dep_install is defined and not dep_install.failed
   unarchive:
-    src: "${blenderSource}"
-    dest: "${ansible_env.HOME}/blender"
+    src: "{{blenderSource}}"
+    dest: "{{ansible_env.HOME}}/blender"
+    creates: "{{ansible_env.HOME}}/blender/blender"
     remote_src: yes
     list_files: yes
+    mode: '0755'
+    owner: "{{ansible_user_id}}"
+    group: "{{ansible_user_id}}"
+    extra_opts:
+        - --strip-components=1
+  register: blender_archive
+
+- name: Add blender to PATH
+  become: true
+  when: blender_archive is defined and blender_archive.failed is defined and not blender_archive.failed and blender_archive.files is defined
+  copy:
+    dest: /etc/profile.d/blender-path.sh
+    content: 'PATH=$PATH:{{blender_archive.dest}}/{{blender_archive.files[0]}}'
+  register: path_set
+

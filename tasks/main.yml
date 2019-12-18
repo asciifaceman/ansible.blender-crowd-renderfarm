@@ -1,2 +1,8 @@
 ---
 - include_tasks: install_blender.yml
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "18.04"
+
+- name: Didn't Run
+  when: ansible_distribution != "Ubuntu" and ansible_distribution_version != "18.04"
+  debug:
+    msg: "Didn't run becasue not ubuntu 18.04, sorry"
