@@ -1,0 +1,14 @@
+---
+#- name: Download blender
+#  get_url:
+#    url: "${blenderSource}"
+#    dest: /tmp/blender.tar.gz
+#    mode: '0644'
+# TODO: Add checksum
+# TODO: 
+- name: Download and unarchive blender
+  unarchive:
+    src: "${blenderSource}"
+    dest: "${ansible_env.HOME}/blender"
+    remote_src: yes
+    list_files: yes
