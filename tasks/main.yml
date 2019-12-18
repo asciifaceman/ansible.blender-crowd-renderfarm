@@ -1,2 +1,2 @@
 ---
-# tasks file for ansible.blender-crowd-renderfarm
+- include_tasks: install_blender.yml

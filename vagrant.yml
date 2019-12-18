@@ -1,0 +1,10 @@
+---
+- name: Apply local role for testing
+  hosts: all
+
+  roles:
+    - role: "{{ playbook_dir }}"
+    - {
+        role: degoss,
+        goss_file: tests/goss/blender.yml
+    }

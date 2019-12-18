@@ -1,1 +1,9 @@
-*.retry
+roles/
+*retry
+
+# vagrant
+/.ansible
+/.vagrant
+
+# vscode + rtd
+*.vscode/
