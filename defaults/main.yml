@@ -1,5 +1,21 @@
 ---
 # defaults file for ansible.blender-crowd-renderfarm\
-blenderSource: https://mirror.clarkson.edu/blender/release/Blender2.81/blender-2.81a-linux-glibc217-x86_64.tar.bz2
-blenderChecksum: TODO
-localTesting: false
+localTesting: false # toggled on by vagrant so it will run tests + not configure GPU
+servicePath: /etc/systemd/system
+serviceSuffix: service
+awsGPU: false # triggers additional configuration settings
+
+blender:
+    version: 2.81
+    source: https://mirror.clarkson.edu/blender/release/Blender2.81/blender-2.81a-linux-glibc217-x86_64.tar.bz2
+    checksum: TODO
+    relativeDir: blender
+    binaryName: blender
+    relativeAddonsPath: scripts/addons
+    
+
+crowdRender:
+    relativePath: .config/blender/{{blender.version}}/scripts/addons
+    pathToStart: src/py_3_7/serv_int_start.py
+    addonDirectoryName: crowdrender
+    source: cr_022_bl280.zip

@@ -2,6 +2,9 @@
 - include_tasks: install_blender.yml
   when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "18.04"
 
+- include_tasks: install_crowdrender.yml
+  when: ansible_distribution == "Ubuntu" and ansible_distribution_version == "18.04"
+
 - name: Didn't Run
   when: ansible_distribution != "Ubuntu" and ansible_distribution_version != "18.04"
   debug:

@@ -12,7 +12,7 @@
 
 - name: Create destination directory
   file:
-    path: "{{ansible_env.HOME}}/blender"
+    path: "{{ansible_env.HOME}}/{{blender.relativeDir}}"
     state: directory
     mode: '0755'
     owner: "{{ansible_user_id}}"
@@ -21,9 +21,9 @@
 - name: Download and unarchive blender
   when: dep_install is defined and not dep_install.failed
   unarchive:
-    src: "{{blenderSource}}"
-    dest: "{{ansible_env.HOME}}/blender"
-    creates: "{{ansible_env.HOME}}/blender/blender"
+    src: "{{blender.source}}"
+    dest: "{{ansible_env.HOME}}/{{blender.relativeDir}}"
+    creates: "{{ansible_env.HOME}}/{{blender.relativeDir}}/{{blender.binaryName}}"
     remote_src: yes
     list_files: yes
     mode: '0755'

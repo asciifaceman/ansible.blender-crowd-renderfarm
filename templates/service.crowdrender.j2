@@ -1,0 +1,14 @@
+[Unit]
+Description=CrowdRender service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{pathToBlenderBinary}} -noaudio -b --python {{pathToCrowdrenderStartPython}} -- -t "server_int_proc"
+Restart=on-failure
+RestartSec=10
+User={{ansible_user_id}}
+WorkingDirectory={{ansible_env.HOME}}/{{blender.relativeDir}}
+
+[Install]
+WantedBy=multi-user.target

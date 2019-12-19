@@ -1,0 +1,86 @@
+---
+- name: Install dependencies
+  become: true
+  package:
+    name:
+        - unzip
+    state: latest
+  register: dep_install
+
+- name: Create destination directory
+  file:
+    path: "{{ansible_env.HOME}}/{{crowdRender.relativePath}}"
+    state: directory
+    mode: '0755'
+    owner: "{{ansible_user_id}}"
+    group: "{{ansible_user_id}}"
+  register: dir_made
+
+- name: Copy and unzip crowdrender
+  when: dir_made is defined and dir_made.failed is defined and not dir_made.failed
+  unarchive:
+    src: "{{crowdRender.source}}"
+    dest: "{{ansible_env.HOME}}/{{crowdRender.relativePath}}"
+    creates: "{{ansible_env.HOME}}/{{crowdRender.relativePath}}/{{crowdRender.addonDirectoryName}}/__init__.py"
+    list_files: yes
+    mode: '0755'
+    owner: "{{ansible_user_id}}"
+    group: "{{ansible_user_id}}"
+  register: cr_archive
+
+- name: Copy blender configuration script
+  when: cr_archive is defined and cr_archive.failed is defined and not cr_archive.failed
+  copy:
+    src: install_crowdrender.py
+    dest: "{{ansible_env.HOME}}/install_crowdrender.py"
+    mode: '0755'
+    owner: "{{ansible_user_id}}"
+    group: "{{ansible_user_id}}"
+  register: copied_py_script
+
+- name: Run blender configuration script
+  when: copied_py_script is defined and copied_py_script.failed is defined and not copied_py_script.failed
+  command: "{{ansible_env.HOME}}/{{blender.relativeDir}}/{{blender.binaryName}} -b -P {{ansible_env.HOME}}/install_crowdrender.py"
+  register: blender_configured
+
+- name: Check blender configured
+  debug:
+    msg: "{{blender_configured}}"
+
+- set_fact:
+    pathToBlenderBinary: "{{ansible_env.HOME}}/{{blender.relativeDir}}/{{blender.binaryName}}"
+    pathToCrowdrenderStartPython: "{{ansible_env.HOME}}/{{crowdRender.relativePath}}/{{crowdRender.addonDirectoryName}}/{{crowdRender.pathToStart}}"
+    serviceFile: "crserv"
+
+- name: "Write systemd service file: {{ serviceFile }}"
+  when: blender_configured is defined and blender_configured.failed is defined and not blender_configured.failed
+  become: true
+  template:
+    src: service.crowdrender.j2
+    dest: "{{ servicePath }}/{{ serviceFile }}.{{ serviceSuffix }}"
+    owner: root
+    group: root
+    mode: 0644
+  register: systemd_wrote
+
+- name: "Ensure daemon is reloaded"
+  when: systemd_wrote is defined and systemd_wrote.failed is defined and not systemd_wrote
+  become: true
+  systemd:
+    daemon_reload: yes
+  register: daemon_reloaded
+
+- name: "Enable systemd service file: {{ serviceFile }}"
+  when: daemon_reloaded is defined and daemon_reloaded.failed is defined and not daemon_reloaded
+  become: true
+  systemd:
+    name: "{{ serviceFile }}"
+    enabled: yes
+    
+- name: "Ensure daemon is reloaded and service is restarted"
+  when: systemd_wrote is defined and systemd_wrote.failed is defined and not systemd_wrote.failed
+  become: true
+  systemd:
+    name: "{{ serviceFile }}"
+    daemon_reload: yes
+    state: restarted
