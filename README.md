@@ -22,9 +22,9 @@ Help Wanted / TODO
 -----------
 
 * Ansible side
-  * Multi-OS support (`awsGPU: true`, etc)
+  * Multi-OS support
 * Blender-side
-  * enabling CUDA/OpenCL if toggle is on
+  * enabling CUDA/OpenCL if toggle is on (`awsGPU: true`, etc)
 
 Requirements
 ------------
