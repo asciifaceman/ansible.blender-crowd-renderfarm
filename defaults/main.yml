@@ -3,7 +3,6 @@
 localTesting: false # toggled on by vagrant so it will run tests + not configure GPU
 servicePath: /etc/systemd/system
 serviceSuffix: service
-awsGPU: false # triggers additional configuration settings
 
 blender:
     version: 2.81

@@ -23,12 +23,12 @@ Help Wanted / TODO
 
 * Ansible side
   * Multi-OS support
-* Blender-side
-  * enabling CUDA/OpenCL if toggle is on (`awsGPU: true`, etc)
+  * Downloading source from CR instead of using local file (having issues with the download redirect)
 
 Requirements
 ------------
 
+* Ansible 2.6+ (py3 preferable)
 * Ubuntu 18.04
 * Strong internet connection
 
@@ -79,11 +79,20 @@ Dependencies
 Example Playbook
 ----------------
 
-Note `awsGPU` in this example is not implemented at this time
+requirements.yml
+```
+---
+- src: https://github.com/asciifaceman/ansible.blender-crowd-renderfarm
+  name: asciifaceman.blender-crowd-renderfarm
+```
 
-    - hosts: servers
-      roles:
-         - { role: asciifaceman.ansible.blender-crowd-renderfarm, awsGPU: true }
+Note: CrAuthToken is not yet implemented due to ansible having a problem contacting CrowdRender's download properly.
+
+```
+- hosts: servers
+  roles:
+     - { role: asciifaceman.ansible.blender-crowd-renderfarm, CrAuthToken: token }
+```
 
 License
 -------
